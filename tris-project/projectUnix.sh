@@ -20,16 +20,16 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
     # Linux: verifica la presenza di diversi emulatori di terminale
     if command -v gnome-terminal >/dev/null 2>&1; then
-        gnome-terminal -- bash -c "docker-compose up --build --scale client=$n_client; exec bash"
-
+        gnome-terminal -- bash -c "docker-compose up --build --scale client=$n_client; exec bash" &
+ 
     elif command -v konsole >/dev/null 2>&1; then
-        konsole --hold -e "docker-compose up --build --scale client=$n_client"
+        konsole --hold -e "docker-compose up --build --scale client=$n_client" &
 
     elif command -v xfce4-terminal >/dev/null 2>&1; then
-        xfce4-terminal --hold -e "docker-compose up --build --scale client=$n_client"
+        xfce4-terminal --hold -e "docker-compose up --build --scale client=$n_client" &
         
     elif command -v xterm >/dev/null 2>&1; then
-        xterm -hold -e "docker-compose up --build --scale client=$n_client"
+        xterm -hold -e "docker-compose up --build --scale client=$n_client" &
     fi
 fi
 
@@ -48,6 +48,7 @@ while [ "$all_containers_running" = "false" ]; do
         sleep 2 #aspetta 2 secondi prima di un nuovo conrollo
     fi
 done
+sleep 3
 
 # Avvia una finestra terminale per ciascun client, collegandosi al rispettivo container
 for (( i=1; i<=n_client; i++ )); do
@@ -60,16 +61,16 @@ for (( i=1; i<=n_client; i++ )); do
     elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
         # Linux: verifica la presenza di vari emulatori di terminale
         if command -v gnome-terminal >/dev/null 2>&1; then
-            gnome-terminal -- bash -c "docker attach '$container_name'; exec bash"
+            gnome-terminal -- bash -c "docker attach '$container_name'; exec bash" &
 
         elif command -v konsole >/dev/null 2>&1; then
-            konsole --hold -e "docker attach '$container_name'"
+            konsole --hold -e "docker attach '$container_name'" &
 
         elif command -v xfce4-terminal >/dev/null 2>&1; then
-            xfce4-terminal --hold -e "docker attach '$container_name'"
+            xfce4-terminal --hold -e "docker attach '$container_name'" &
 
         elif command -v xterm >/dev/null 2>&1; then
-            xterm -hold -e "docker attach '$container_name'"
+            xterm -hold -e "docker attach '$container_name'" &
         fi
     fi
 done
